@@ -64,6 +64,19 @@ class CashBurnServiceTest {
   }
 
   @Test
+  void lastMonthSettlesTheInstallmentsTheIntervalLeftOver() {
+    // 1000 financed over 5 months paid every 3 months: 3 months at month 3, the remaining 2 at month 5
+    final var result = service.simulateCashBurn(new CashBurnRequestDto(List.of(), 1000, 3, 0, 5, 100_000, 0));
+
+    assertThat(result.monthsSurvived()).isEqualTo(5);
+    assertThat(result.totalPaidToDeveloper()).isCloseTo(1000, within(1e-9));
+    assertThat(result.totalUnpaidToDeveloper()).isCloseTo(0, within(1e-9));
+    assertThat(result.amounts()).isEqualTo(Map.of(
+        3, List.of(600.0),
+        5, List.of(400.0)));
+  }
+
+  @Test
   void stopsWhenTheBalanceRunsOut() {
     final var result = service.simulateCashBurn(new CashBurnRequestDto(List.of(), 1000, 1, 0, 2, 100, 0));
 
@@ -78,6 +91,13 @@ class CashBurnServiceTest {
     assertThatThrownBy(() -> service.simulateCashBurn(new CashBurnRequestDto(List.of(), 1000, 1, 101, 12, 0, 0)))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessageContaining("discount");
+  }
+
+  @Test
+  void rejectsInstallmentIntervalBelowOneMonth() {
+    assertThatThrownBy(() -> service.simulateCashBurn(new CashBurnRequestDto(List.of(), 1000, 0, 0, 12, 0, 0)))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("interval");
   }
 
   @Test

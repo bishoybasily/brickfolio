@@ -50,6 +50,9 @@ public class CashBurnService {
 
     final var paidAmounts = new HashMap<Integer, List<Double>>();
 
+    if (dto.installmentIntervalMonths() < 1)
+      throw new IllegalArgumentException("Installment interval must be at least 1 month");
+
     double totalScheduledPercent = dto.scheduledPayments()
         .stream()
         .mapToDouble(ScheduledPaymentPercentageDto::amountPercentage)
@@ -94,6 +97,7 @@ public class CashBurnService {
     }
 
     int monthsSurvived = 0;
+    int lastInstallmentMonth = 0;
     final int installmentIntervalMonths = dto.installmentIntervalMonths();
 
     for (int month = 1; month <= dto.installmentMonths(); month++) {
@@ -120,9 +124,14 @@ public class CashBurnService {
         log.info("Scheduled {}% = {} at month {}. Balance = {}", scheduledPercent, scheduledAmount, month, balance);
       }
 
-      if (month % installmentIntervalMonths == 0 && financedPercent > 0) {
+      // the last month settles whatever the interval left over (e.g. 100 months paid quarterly)
+      final boolean installmentDue =
+          month % installmentIntervalMonths == 0 || month == dto.installmentMonths();
 
-        double installment = monthlyInstallment * installmentIntervalMonths;
+      if (installmentDue && financedPercent > 0) {
+
+        double installment = monthlyInstallment * (month - lastInstallmentMonth);
+        lastInstallmentMonth = month;
 
         if (installment > totalUnpaidToDeveloper)
           installment = totalUnpaidToDeveloper;
