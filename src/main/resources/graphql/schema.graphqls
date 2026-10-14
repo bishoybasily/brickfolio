@@ -1,0 +1,116 @@
+type Query {
+
+    developers: [Developer!]!
+    developer(id: ID!): Developer
+    projects: [Project!]!
+    project(id: ID!): Project
+    units: [Unit!]!
+    unit(id: ID!): Unit
+
+    simulateCashBurn(cashBurnRequestDto: CashBurnRequestDto!): CashBurnResponseDto!
+
+    assessUnitSimulateCashBurn(assesUnitCashBurnRequestDto: AssesUnitCashBurnRequestDto!): [CashBurnResponseDto!]!
+
+    conversations: [Conversation!]!
+    conversation(id: ID!): Conversation
+}
+
+type Subscription {
+    parseOffer(conversationId: String!, message: String!): String!
+}
+
+input ScheduledPaymentDto {
+    dueMonth:Int!
+    amountPercentage:Float!
+}
+
+input AssesUnitCashBurnRequestDto {
+    unitId: ID!
+    initialDeposit: Float!
+    monthlyDeposit: Float!
+    installmentIntervalMonths: Int!
+}
+
+input CashBurnRequestDto {
+    unitPrice:Float!
+    installmentIntervalMonths: Int!
+    initialDiscountPercentage: Float!
+    initialDeposit:Float!
+    monthlyDeposit:Float!
+    installmentMonths:Int!
+    scheduledPayments:[ScheduledPaymentDto!]!
+}
+
+type CashBurnResponseDto {
+    monthlyInstallment: Float!
+    monthsSurvived: Int!
+    effectiveUnitPrice: Float!
+    totalPaidToDeveloper: Float!
+    totalUnpaidToDeveloper: Float!
+    remainingBalance: Float!
+    paidAmounts: [MonthlyPayments!]!
+}
+
+type MonthlyPayments {
+    month: Int!
+    amounts: [Float!]!
+}
+
+type Developer {
+    id: ID!
+    name: String
+    projects: [Project!]!
+}
+
+type Project {
+    id: ID!
+    name: String
+    location: String
+    locationDescription: String
+    deliveryMonths: Int
+    developer: Developer
+    units: [Unit!]!
+    paymentPlans: [PaymentPlan!]!
+}
+
+type Unit {
+    id: ID!
+    name: String
+    indoorArea: Float
+    outdoorArea: Float
+    floor: Int
+    type: UnitType
+    project: Project
+    price: Float
+}
+
+type PaymentPlan {
+    id: ID!
+    months: Int
+    discountPercentage: Float
+    payments: [Payment!]!
+}
+
+type Payment {
+    name: String
+    percentage: Float
+    due: Int
+}
+
+type Conversation {
+    id: ID!
+    messages: [ConversationMessage!]!
+}
+
+type ConversationMessage {
+    type: String!
+    content: String!
+    timestamp: String
+}
+
+enum UnitType {
+    RETAIL
+    APARTMENT
+    OFFICE
+    COMMERCIAL
+}

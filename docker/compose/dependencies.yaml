@@ -1,0 +1,17 @@
+services:
+  postgres:
+    image: postgres:16.4-alpine3.20
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    environment:
+      POSTGRES_DB: ${DB_NAME:-brickfolio}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    networks:
+      - brickfolio
+
+
+networks:
+  brickfolio:
+    name: brickfolio
+    driver: bridge

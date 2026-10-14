@@ -1,0 +1,32 @@
+spring:
+  threads:
+    virtual:
+      enabled: true
+  config:
+    import: "optional:file:.env[.properties]"
+  application:
+    name: brickfolio
+  graphql:
+    graphiql:
+      enabled: true
+    websocket:
+      path: /graphql
+  ai:
+    ollama:
+      base-url: "${OLLAMA_BASE_URL:http://localhost:11434}"
+      chat:
+        model: "${OLLAMA_MODEL:gemma4:31b}"
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: "jdbc:postgresql://${DB_HOST:127.0.0.1}:${DB_PORT:5432}/${DB_NAME:${spring.application.name}}"
+    username: "${DB_USERNAME:postgres}"
+    password: "${DB_PASSWORD:postgres}"
+
+  jpa:
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: validate
+        show_sql: true
+        format_sql: false
