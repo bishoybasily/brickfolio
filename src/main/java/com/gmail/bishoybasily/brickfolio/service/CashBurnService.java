@@ -25,9 +25,9 @@ public class CashBurnService {
   private final UnitsService unitsService;
   private final PaymentPlansService paymentPlansService;
 
-  // 15% yearly savings rate (IDB), applied monthly
   private double calculateMonthlyInterest(double balance) {
-    return balance * 0.15 / 12;
+    // Product: Thndr Clouds (Egypt)
+    return balance * 0.20 / 12;
   }
 
   public CashBurnResponseDto simulateCashBurn(CashBurnRequestDto dto) {
