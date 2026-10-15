@@ -26,8 +26,52 @@ public class CashBurnService {
   private final PaymentPlansService paymentPlansService;
 
   private double calculateMonthlyInterest(double balance) {
+
+    // https://www.aaib.com/accounts/golden-saving-plus
+    // if (balance >= 20_000_000)
+    // return balance * 0.1625 / 12;
+    // if (balance >= 10_000_000)
+    // return balance * 0.1575 / 12;
+    // if (balance >= 5_000_000)
+    // return balance * 0.1550 / 12;
+    // if (balance >= 1_000_000)
+    // return balance * 0.1475 / 12;
+    // if (balance >= 500_000)
+    // return balance * 0.1350 / 12;
+    // if (balance >= 5_000)
+    // return balance * 0.1125 / 12;
+    // return 0.0;
+
+    // EG-Bank
+    // if (balance >= 50_000_000)
+    // return balance * 0.1757 / 12;
+    // if (balance >= 5_000_000)
+    // return balance * 0.1725 / 12;
+    // if (balance >= 2_000_000)
+    // return balance * 0.1675 / 12;
+    // if (balance >= 250_000)
+    // return balance * 0.16 / 12;
+    // return 0.0;
+
+    // NBE
+    // if (balance >= 2_000_000)
+    // return balance * 0.16 / 12;
+    // if (balance >= 500_000)
+    // return balance * 0.15 / 12;
+    // if (balance >= 50_000)
+    // return balance * 0.12 / 12;
+    // return 0.0;
+
+    // IDB (Industrial Development Bank)
+    return balance * 0.15 / 12;
+
+    // Mashreq Neo (ceiling 1M)
+    // return Math.min(balance, 1_000_000) * 0.19 / 12;
+
+    // return balance * 0.1 / 12; // Stress test, The lowest in the past 10 years in Egypt (0.07 ~ 2020,2021)
+
     // Product: Thndr Clouds (Egypt)
-    return balance * 0.20 / 12;
+    // return balance * 0.20 / 12;
   }
 
   public CashBurnResponseDto simulateCashBurn(CashBurnRequestDto dto) {
